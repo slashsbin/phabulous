@@ -1,0 +1,8 @@
+gantt_data:
+    path:       /gantt/data.{_format}
+    defaults:
+        _controller: AppBundle:Gantt:data
+    methods:
+        - GET
+    requirements:
+        _format: json

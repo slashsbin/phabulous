@@ -1,0 +1,67 @@
+.red {
+    color: #c0392b
+}
+.orange {
+    color: #e67e22
+}
+.yellow {
+    color: #f1c40f
+}
+.green {
+    color: #139543
+}
+.blue {
+    color: #2980b9
+}
+.sky {
+    color: #3498db
+}
+.indigo {
+    color: #6e5cb6
+}
+.pink {
+    color: #da49be
+}
+
+#myGanttChart {
+    min-height: 400px;
+}
+
+.gantt_message_area {
+    top: 54px;
+}
+
+#myGanttChart {
+    width: 100%;
+}
+
+.gantt_task_content > a {
+    color: inherit;
+}
+
+.gantt_cell .gantt_tree_icon {
+    text-align: center;
+}
+
+.gantt_task_cell.week_end {
+    background-color: #EFF5FD;
+}
+
+.gantt_task_row.overdue {
+    -o-filter: brightness(200%);
+    -moz-filter: brightness(200%);
+    -webkit-filter: brightness(200%);
+    filter: brightness(200%);
+}
+
+.gantt_task_row.gantt_selected .gantt_task_cell.week_end {
+    background-color: #F8EC9C;
+}
+
+.gantt_task_line .gantt_task_progress {
+    background-color: inherit;
+    -o-filter: brightness(60%);
+    -moz-filter: brightness(60%);
+    -webkit-filter: brightness(60%);
+    filter: brightness(60%);
+}

@@ -1,0 +1,83 @@
+{% extends '::base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/vendor/gantt/codebase/dhtmlxgantt.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('bundles/app/css/gantt.css') }}">
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript" src="{{ asset('assets/vendor/gantt/codebase/dhtmlxgantt.js') }}"></script>
+    <script type="text/javascript"
+            src="{{ assetTry('bundles/app/js/gantt_locale_'~app.request.defaultLocale~'.js', null, 'assets/vendor/gantt/codebase/locale/locale_'~app.request.defaultLocale~'.js', 'assets/vendor/gantt/codebase/locale/locale.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('assets/vendor/gantt/codebase/ext/dhtmlxgantt_marker.js') }}"></script>
+    <script type="text/javascript"
+            src="{{ asset('assets/vendor/gantt/codebase/ext/dhtmlxgantt_fullscreen.js') }}"></script>
+    <script type="text/javascript"
+            src="{{ asset('assets/vendor/gantt/codebase/ext/dhtmlxgantt_quick_info.js') }}"></script>
+    {% if not app.debug %}
+        <script type="text/javascript" src="//export.dhtmlx.com/gantt/api.js"></script>
+    {% endif %}
+    <script type="text/javascript" src="{{ asset('bundles/app/js/gantt.js') }}"></script>
+    <!-- Gantt ReConfig -->
+    <script type="text/javascript">
+        gantt.config.readonly = {{ is_granted('ROLE_ADMIN') ? 'false' : 'true' }};
+        gantt.config.drag_move = {{ is_granted('ROLE_ADMIN') ? 'true' : 'false' }};
+        gantt.config.drag_resize = {{ is_granted('ROLE_ADMIN') ? 'true' : 'false' }};
+    </script>
+    <!-- Data -->
+    <script id="ganttData"
+            type="application/json">{{ render(controller('AppBundle:Gantt:data', { _format: 'json' })) }}</script>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-xs-12">
+            <!-- Gantt Toolbar -->
+            <div class="btn-toolbar" role="toolbar" aria-label="Gantt Toolbar">
+                <!-- View -->
+                <div class="btn-group btn-group-sm btn" role="group" aria-label="View">
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <a id="gantt_view__refresh" href="{{ path('cache_refresh') }}" class="btn btn-outline-info"
+                           title="Refresh"><i class="icon ion-refresh"></i></a>
+                    {% endif %}
+                    <div id="scale-toolbar" class="btn-group btn-group-sm" role="group">
+                        <button id="btnGroupScale" type="button" class="btn btn-outline-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Scale
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="btnGroupScale">
+                            <a class="dropdown-item" href="#" data-scale="day">Day</a>
+                            <a class="dropdown-item" href="#" data-scale="week">Week</a>
+                            <a class="dropdown-item" href="#" data-scale="month">Month</a>
+                            <a class="dropdown-item" href="#" data-scale="year">Year</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item active" href="#" data-scale="custom">Month/Week/Day</a>
+                        </div>
+                    </div>
+                    <button id="gantt_view__full_screen" type="button" class="btn btn-outline-info" title="Full Screen">
+                        <i class="icon ion-arrow-expand"></i></button>
+                </div>
+                <!-- Export -->
+                <div class="btn-group btn-group-sm btn" role="group" aria-label="Export">
+                    <button id="gantt_export__png" type="button" class="btn btn btn-outline-info" title="Export as PNG">
+                        <i class="icon ion-image"></i></button>
+                    <button id="gantt_export__excel" type="button" class="btn btn btn-outline-info"
+                            title="Export as Excel"><i class="icon ion-calculator"></i></button>
+                    <button id="gantt_export__ical" type="button" class="btn btn btn-outline-info"
+                            title="Export as iCal"><i class="icon ion-calendar"></i></button>
+                    <button id="gantt_export__pdf" type="button" class="btn btn btn-outline-info" title="Export as PDF">
+                        <i class="icon ion-printer"></i></button>
+                    <button id="gantt_export__msproject" type="button" class="btn btn btn-outline-info"
+                            title="Export as MS-Project"><i class="icon ion-briefcase"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="myGanttRow" class="row">
+        <div id="myGanttCol" class="col-xs-12">
+            <!-- Gantt Chart -->
+            <div id="myGanttChart"></div>
+        </div>
+    </div>
+{% endblock %}

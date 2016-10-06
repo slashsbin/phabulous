@@ -1,0 +1,15 @@
+fos_js_routing:
+    resource: "@FOSJsRoutingBundle/Resources/config/routing/routing.xml"
+
+app:
+    resource: "@AppBundle/Resources/config/routing.yml"
+
+phacility_search:
+    resource: "@AppBundle/Resources/config/routing_phacility_search.yml"
+
+phacility_edit:
+    resource: "@AppBundle/Resources/config/routing_phacility_edit.yml"
+
+gantt:
+    resource: "@AppBundle/Resources/config/routing_gantt.yml"
+

@@ -1,0 +1,20 @@
+root:
+    path:       /
+    defaults:
+        _controller: AppBundle:Default:index
+    methods:
+        - GET
+
+security_logout:
+    path:       /logout
+    defaults:
+        _controller: AppBundle:Security:logout
+    methods:
+        - GET
+
+cache_refresh:
+    path:       /cache/refresh
+    defaults:
+        _controller: AppBundle:Default:refresh
+    methods:
+        - GET

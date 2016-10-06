@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="{{ app.request.locale }}">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="">
+        <meta name="author" content="shokri.md@gmail.com">
+        <link rel="icon" href="{{ asset('favicon.ico') }}">
+        <title>{% block title %}PHABulous!{% endblock %}</title>
+
+        {% block meta %}
+        {% endblock meta %}
+
+        {% block stylesheets %}
+            <link rel="stylesheet" href="{{ asset('assets/vendor/bootstrap/dist/css/bootstrap.min.css') }}">
+            <link rel="stylesheet" href="{{ asset('assets/vendor/ionicons/css/ionicons.min.css') }}" />
+            <link rel="stylesheet" href="{{ asset('css/base.css') }}">
+        {% endblock %}
+    </head>
+    <body>
+        {% block body %}
+            <!-- Fixed navbar -->
+            <div class="pos-f-t">
+                <nav class="navbar navbar-dark navbar-static-top bg-inverse">
+                    <div class="container-fluid">
+                        <a class="navbar-brand" href="{{ path('root') }}">PHABulous!</a>
+                        <button class="navbar-toggler hidden-sm-up pull-xs-right" type="button" data-toggle="collapse" data-target="#navbar-header">
+                            &#9776;
+                        </button>
+                        <div class="collapse navbar-toggleable-xs" id="navbar-header">
+                            <ul class="nav navbar-nav">
+                                <li class="nav-item active">
+                                    <a class="nav-link" href="{{ path('root') }}">Gantt Chart</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="https://github.com/slashsBin/Phabulous" target="_blank">Repo</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="https://github.com/slashsBin/Phabulous/blob/develop/README.md" target="_blank">About</a>
+                                </li>
+                            </ul>
+                            <ul class="nav navbar-nav pull-sm-right">
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#"><i class="icon ion-person"></i> {{ app.user.username | upper }}{% if is_granted('ROLE_ADMIN') %}<sup class="text-warning"><i class="icon ion-star"></i></sup>{% endif %}</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ logout_path('main') }}"><i class="icon ion-power"></i></a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+
+            <!-- Page content -->
+            <div class="container-fluid">
+                {% block content %}{% endblock %}
+            </div>
+        {% endblock %}
+        {% block javascripts %}
+            <script src="{{ asset('assets/vendor/jquery/dist/jquery.min.js') }}"></script>
+            <script src="{{ asset('assets/vendor/tether/dist/js/tether.min.js') }}"></script>
+            <script src="{{ asset('assets/vendor/bootstrap/dist/js/bootstrap.min.js') }}"></script>
+            <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+            <script src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
+        {% endblock %}
+    </body>
+</html>

@@ -1,0 +1,10 @@
+phacility_edit_maniphest:
+    path:     /phacility/edit/maniphest.{_format}
+    defaults:
+        _controller: AppBundle:Phacility/Edit:maniphest
+    methods:
+        - POST
+    options:
+        expose: true
+    requirements:
+        _format: json

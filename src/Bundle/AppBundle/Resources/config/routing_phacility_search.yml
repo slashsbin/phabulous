@@ -1,0 +1,26 @@
+phacility_search_people:
+    path:       /phacility/search/people.{_format}
+    defaults:
+        _controller: AppBundle:Phacility/Search:people
+    methods:
+        - GET
+    requirements:
+        _format: json
+
+phacility_search_maniphest:
+    path:       /phacility/search/maniphest.{_format}
+    defaults:
+        _controller: AppBundle:Phacility/Search:maniphest
+    methods:
+        - GET
+    requirements:
+        _format: json
+
+phacility_search_projects:
+    path:       /phacility/search/projects.{_format}
+    defaults:
+        _controller: AppBundle:Phacility/Search:projects
+    methods:
+        - GET
+    requirements:
+        _format: json
