@@ -20,5 +20,5 @@ parameters:
     phacility_phabulous_bot_token:          ""
     phacility_people_query_key:             active
     phacility_projects_query_key:           active
-    phacility_maniphest_query_key:          active
+    phacility_maniphest_query_key:          all
     phacility_maniphest_query_limit:        100

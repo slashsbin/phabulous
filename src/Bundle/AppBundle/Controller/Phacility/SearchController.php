@@ -2,6 +2,7 @@
 
 namespace Bundle\AppBundle\Controller\Phacility;
 
+use Bundle\AppBundle\Model\Phabulous;
 use DateInterval;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
@@ -23,6 +24,7 @@ class SearchController extends Controller
                         'attachments' => [
                             'projects' => TRUE,
                         ],
+                        'order' => Phabulous::MANIPHEST_START_DATE,
                         'limit'       => $this->getParameter('phacility_maniphest_query_limit'),
                     ]
                 );

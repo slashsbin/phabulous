@@ -13,6 +13,8 @@ class GanttController extends Controller
      * @param $ganttTaskStartDateTS
      * @param $ganttTaskDuration
      * @param $ganttTaskEndDateTS
+     *
+     * @deprecated
      */
     protected function reCalculateDates(&$ganttTaskStartDateTS, &$ganttTaskDuration, &$ganttTaskEndDateTS) {
         switch (true) {
@@ -39,18 +41,16 @@ class GanttController extends Controller
 
     public function dataAction()
     {
+        // Data
+        $ganttTasks = [];
+        $ganttLinks = [];
         $phacilityUsersJson = $this->forward('AppBundle:Phacility/Search:people')->getContent();
         $phacilityTasksJson = $this->forward('AppBundle:Phacility/Search:maniphest')->getContent();
-        $phacilityProjectsJson = $this->forward('AppBundle:Phacility/Search:projects')->getContent();
-
         $phacilityUsers = json_decode($phacilityUsersJson, TRUE);
         $phacilityTasks = json_decode($phacilityTasksJson, TRUE);
-        $phacilityProjects = json_decode($phacilityProjectsJson, TRUE);
         $phacilityUrl = $this->getParameter('phacility_url');
 
-        $phacilityProjectsIds = array_map(function($phProject) {
-            return $phProject['phid'];
-        }, $phacilityProjects['data']);
+        // Helpers
         $phacilityFindById = function($phid, $phacilityItems) {
             foreach($phacilityItems['data'] as $phUser) {
                 if ($phid === $phUser['phid']) {
@@ -59,37 +59,16 @@ class GanttController extends Controller
             }
         };
 
-        $ganttTasks = [];
-        $ganttLinks = [];
-
-        // Projects
-        foreach ($phacilityProjects['data'] as $phProject) {
-            $ganttTask = [];
-
-            $ganttTask['id'] = $phProject['phid'];
-            $ganttTask['text'] = $phProject['fields']['name'];
-            $ganttTask['description'] = $phProject['fields']['description'];
-            $ganttTask['start_date'] = date('Y-m-d');
-            $ganttTask['duration'] = 0;
-            $ganttTask['end_date'] = date('Y-m-d');
-            $ganttTask['progress'] = 0;
-            $ganttTask['open'] = TRUE;
-            $ganttTask['holder'] = '';
-            $ganttTask['uri'] = sprintf('%s/project/view/%s/', $phacilityUrl, $phProject['id']);
-            $ganttTask['tid'] = $phProject['id'];
-            $ganttTask['type'] = 'project';
-            $ganttTask['childs_count'] = 0;
-
-            $ganttTasks[$phProject['phid']] = $ganttTask;
-        }
-
         // Tasks
         foreach ($phacilityTasks['data'] as $phTask) {
             // Gantt Task
             $ganttTask = [];
 
+            // Status
+            $ganttTaskIsOpen = 'open' === $phTask['fields']['status']['value'];
+
             // Dates & Estimation
-            $ganttTaskDuration = $phTask['fields'][Phabulous::MANIPHEST_ESTIMATE];
+            $ganttTaskDuration = $phTask['fields'][Phabulous::MANIPHEST_ESTIMATE] ?: 0;
             $ganttTaskStartDate = null;
             $ganttTaskEndDate = null;
             if ($ganttTaskStartDateTS = $phTask['fields'][Phabulous::MANIPHEST_START_DATE]) {
@@ -98,6 +77,10 @@ class GanttController extends Controller
             if ($ganttTaskEndDateTS = $phTask['fields'][Phabulous::MANIPHEST_END_DATE]) {
                 $ganttTaskEndDate = date('Y-m-d', $ganttTaskEndDateTS);
             }
+
+            // Progress
+            $ganttTaskProgress = $phTask['fields'][Phabulous::MANIPHEST_PROGRESS] ?: 0;
+
             // UnScheduled Tasks
             $ganttTaskRequiredDates = [
                 $ganttTaskStartDateTS,
@@ -105,55 +88,29 @@ class GanttController extends Controller
                 $ganttTaskDuration,
             ];
             $ganttTaskRequiredDates = array_filter($ganttTaskRequiredDates);
-            $ganttTask['_unscheduled'] = count($ganttTaskRequiredDates) <= 1;
+            if ( $ganttTask['_unscheduled'] = count($ganttTaskRequiredDates) !== 2 ) {
+                continue;
+            }
+
             // Overdue
             $ganttTask['overdue'] = !$ganttTask['_unscheduled'] &&
-                'open' === $phTask['fields']['status']['value'] &&
+                $ganttTaskIsOpen &&
                 strtotime(sprintf('+ %s %s', $ganttTaskDuration, Phabulous::MANIPHEST_ESTIMATE_UNIT), $ganttTaskStartDateTS) < time();
-            // Set UnScheduled Tasks Start/End Dates to Task Create/Modified Dates
-            if ($ganttTask['_unscheduled']) {
-                $ganttTaskStartDate = date('Y-m-d', $phTask['fields']['dateCreated']);
-                $ganttTaskEndDate = date('Y-m-d', $phTask['fields']['dateModified']);
-            }
 
             $ganttTask['id'] = $phTask['phid'];
             $ganttTask['text'] = $phTask['fields']['name'];
             $ganttTask['description'] = $phTask['fields']['name'];
             $ganttTask['start_date'] = $ganttTaskStartDate;
-            $ganttTask['duration'] = $ganttTaskDuration ?: 0;
+            $ganttTask['duration'] = $ganttTaskDuration;
             $ganttTask['end_date'] = $ganttTaskEndDate;
-            $ganttTask['progress'] = $phTask['fields'][Phabulous::MANIPHEST_PROGRESS] / 100;
-            $ganttTask['open'] = 'open' === $phTask['fields']['status']['value'];
-            $ganttTask['holder'] = $phacilityFindById($phTask['fields']['ownerPHID'], $phacilityUsers)['fields']['realName'];
+            $ganttTask['progress'] = $ganttTaskProgress / 100;
+            $ganttTask['open'] = $ganttTaskIsOpen;
+            $ganttTask['holder'] = $phacilityFindById($phTask['fields']['ownerPHID'], $phacilityUsers)['fields']['realName'] ?: '';
             $ganttTask['uri'] = sprintf('%s/T%s', $phacilityUrl, $phTask['id']);
             $ganttTask['tid'] = $phTask['id'];
             $ganttTask['priority'] = $phTask['fields']['priority']['name'];
             $ganttTask['priority_color'] = $phTask['fields']['priority']['color'];
             $ganttTask['type'] = 'task';
-
-            // Parent Project
-            if ($parentProjectId = array_intersect($phacilityProjectsIds, $phTask['attachments']['projects']['projectPHIDs'])) {
-                $parentProjectId = array_pop($parentProjectId);
-                $ganttTaskParent = &$ganttTasks[$parentProjectId];
-
-                // Update Parent Progress
-                $ganttTaskParent['progress'] = ($ganttTaskParent['progress'] * $ganttTaskParent['childs_count']) + $ganttTask['progress'];
-                $ganttTaskParent['progress'] /= ++$ganttTaskParent['childs_count'];
-                $ganttTaskParent['progress'] = round($ganttTaskParent['progress'], 2);
-
-                // Update Parent StartDate
-                if ($ganttTaskStartDate) {
-                    if ($ganttTaskStartDate < $ganttTaskParent['start_date']) {
-                        $ganttTaskParent['start_date'] = $ganttTaskStartDate;
-                    }
-                    if ($ganttTaskEndDate > $ganttTaskParent['end_date']) {
-                        $ganttTaskParent['end_date'] = $ganttTaskEndDate;
-                    }
-                    $ganttTaskParent['duration'] += $ganttTask['duration'];
-                }
-
-                $ganttTask['parent'] = $parentProjectId;
-            }
 
             $ganttTasks[$phTask['phid']] = $ganttTask;
         }
