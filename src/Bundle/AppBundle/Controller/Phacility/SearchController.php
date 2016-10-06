@@ -16,15 +16,20 @@ class SearchController extends Controller
             $conduit = $this->get('phacility.conduit');
             $serializer = $this->get('serializer');
 
-            $result = $conduit->searchManiphest(
-                [
-                    'queryKey' => $this->getParameter('phacility_maniphest_query_key'),
-                    'attachments' => [
-                        'projects' => true,
-                    ],
-                    'limit' => $this->getParameter('phacility_maniphest_query_limit'),
-                ]
-            );
+            try {
+                $result = $conduit->searchManiphest(
+                    [
+                        'queryKey'    => $this->getParameter('phacility_maniphest_query_key'),
+                        'attachments' => [
+                            'projects' => TRUE,
+                        ],
+                        'limit'       => $this->getParameter('phacility_maniphest_query_limit'),
+                    ]
+                );
+            } catch (\Exception $e) {
+                $result = ['data' => []];
+            }
+
             $phacilityTasksCache->set($result);
             $phacilityTasksCache->expiresAfter(DateInterval::createFromDateString('6 hour'));
             $appCache->save($phacilityTasksCache);
@@ -44,11 +49,15 @@ class SearchController extends Controller
             $conduit = $this->get('phacility.conduit');
             $serializer = $this->get('serializer');
 
-            $result = $conduit->searchUser(
-                [
-                    'queryKey' => $this->getParameter('phacility_people_query_key'),
-                ]
-            );
+            try {
+                $result = $conduit->searchUser(
+                    [
+                        'queryKey' => $this->getParameter('phacility_people_query_key'),
+                    ]
+                );
+            } catch (\Exception $e) {
+                $result = ['data' => []];
+            }
 
             $phacilityUsersCache->set($result);
             $phacilityUsersCache->expiresAfter(DateInterval::createFromDateString('1 week'));
@@ -68,11 +77,16 @@ class SearchController extends Controller
         if (!$phacilityProjectsCache->isHit()) {
             $conduit = $this->get('phacility.conduit');
 
-            $result = $conduit->searchProjects(
-                [
-                    'queryKey' => $this->getParameter('phacility_projects_query_key'),
-                ]
-            );
+            try {
+                $result = $conduit->searchProjects(
+                    [
+                        'queryKey' => $this->getParameter('phacility_projects_query_key'),
+                    ]
+                );
+            } catch (\Exception $e) {
+                $result = ['data' => []];
+            }
+
             $phacilityProjectsCache->set($result);
             $phacilityProjectsCache->expiresAfter(DateInterval::createFromDateString('1 week'));
             $appCache->save($phacilityProjectsCache);
