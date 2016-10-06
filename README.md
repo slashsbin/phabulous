@@ -6,21 +6,23 @@ Simple Dashboard-style Charts for [Phabricator](https://www.phacility.com/phabri
 Features
 --------
 
-- [X] Gantt Chart for Tasks
-- [X] Colorize Task bars using it's Priority
-- [X] Identify Closed Tasks on Gantt
-- [X] Show Task Progress on Gantt
-- [ ] Group Tasks by Custom Projects List
+- [ ] Gantt Chart for Tasks
+- [ ] Colorize Task bars using it's Priority
+- [ ] Identify Closed Tasks on Gantt
+- [ ] Show Task Progress on Gantt
 - [ ] Link Task Dependencies on Gantt
-- [X] Drag-n-Drop/ReSize Tasks on Gantt to Change it's Start-Date/Duration and Save it at Phabricator
-- [X] Mark UnScheduled Tasks
-- [X] Export Gantt Chart to PDF/iCal/Excel/MS-Project
-- [ ] Dashboard for Gantt Status: Overdue(using Phrequent), Tasks Count, ...
-- [X] Simple HTTP-Digest Authentication
-- [X] Simple In-Memory Users, with Separate Access-Level for Admins
+- [ ] Drag-n-Drop/ReSize Tasks on Gantt to Change it's Start-Date/Duration and Save it at Phabricator
+- [ ] Ignore UnScheduled Tasks
+- [ ] Export Gantt Chart to PDF/iCal/Excel/MS-Project
+- [ ] Dashboard for Gantt Status:
+    - [ ] Overdue(using Phrequent)
+    - [ ] Tasks Count per User
+- [ ] Simple HTTP-Digest Authentication
+- [ ] Simple In-Memory Users, with Separate Access-Level for Admins(based on Phabricator User Roles)
 - [ ] Respect Phabricator Task Edit Policies
-- [X] Cache Responses from Phabricator to Speed up Data Lookups.
-- [X] Thanks to New Conduit API, We can Dynamically Choose Gantt Data from Phabricator itself using Saved Queries.
+- [ ] Cache Responses from Phabricator to Speed up Data Lookups
+- [ ] Thanks to New Conduit API, We can Dynamically Choose Gantt Data from Phabricator itself using Saved Queries
+- [ ] Support Wikimedia Sprint Extension
 
 * * *
 
