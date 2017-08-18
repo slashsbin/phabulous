@@ -1,5 +1,6 @@
 PHABulous
 =========
+[![Maintenance](https://img.shields.io/maintenance/no/2016.svg)](https://github.com/slashsBin/phabulous)
 
 Simple Dashboard-style Charts for [Phabricator](https://www.phacility.com/phabricator/), with Focus on Gantt Charts.
 
